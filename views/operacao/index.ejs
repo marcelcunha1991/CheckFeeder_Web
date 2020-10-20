@@ -1,0 +1,63 @@
+<%- include ('../partials/header.ejs') %>
+
+
+<div class="container">
+
+    <div class="card mt-4"> 
+     
+        <div class="card-header mx-auto">
+            <h2> Operações - <%= maquina%> </h2>
+        </div>        
+        <div class="card-body">
+     
+                <input type="hidden" id="maquina" value="<%= maquina%>"> 
+                
+                <div >
+                  <label for="cdMapa">Mapas</label>
+                  <select name="mapas" id="mapas" name="mapas">
+                      <% mapas.forEach((mapa) => { %>
+                        <option value="<%= mapa.idMapa %>"> <%= mapa.cdMapa %></option>
+                      <% }) %>
+                </select>
+                </div>
+
+                <div class="btn-group btn-group-lg " role="group" >  
+
+                    <form method="GET" action="/realimentacao/<%=maquina%>" style="margin-right: 5%; ">
+                        <button type="submit"  class="btn btn-primary" >Conferência </button>      
+                    </form>  
+                    
+                    <form method="GET" id ="teste" action="/realimentacao/<%=maquina%>">
+                        <button type="submit" id="btnRealimentacao" class="btn btn-primary">Realimentação</button>
+                    </form>             
+                   
+                </div>
+                <br>
+                <div class="btn-group btn-group-lg " style="padding-top: 2%;" role="group" > 
+                    <form method="GET" action="/realimentacao/<%=maquina%>" style="margin-right: 5%; ">
+                        <button type="submit" id = "btnDesalim" class="btn btn-primary" style="margin-right: 5%;" >Desalimentação</button> 
+                    </form>   
+                    <form method="GET" action="/realimentacao/<%=maquina%>" style="margin-right: 5%; ">         
+                        <button type="submit" class="btn btn-primary">Alimentação</button>
+                    </form>    
+                </div>
+                <br>
+                <div class="btn-group btn-group-lg " style="padding-top: 2%;" role="group" > 
+                    <form method="GET" action="/realimentacao/<%=maquina%>" style="margin-right: 5%; ">   
+                        <button type="submit" class="btn btn-primary" style="margin-right: 5%;" >Limpar</button>     
+                    </form>    
+                    
+                    <form method="GET" action="/realimentacao/<%=maquina%>" style="margin-right: 5%; ">            
+                        <button type="submit" class="btn btn-primary" style="float: right;">Sair</button>
+                    </form>
+                </div>
+   
+        
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src=/scripts/OperacaoScript.js></script>
+<%- include ('../partials/footer.ejs') %>
