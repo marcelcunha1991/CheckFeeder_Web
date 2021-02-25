@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>CheckFeeder</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+ 
+
+  </head>
+
+<div class="container">
+ 
+  <br>
+    <div class="card">
+            <div class="card-header">
+                   
+                        <h2>Editar Máscara</h2>
+                    
+            </div>
+            <div class="card-body">
+                    <form  method="POST" action="/mascaras/update">
+                            <input class="form-control" type="text" name="fabricante" placeholder="Insira o formato da máscara" value="<%= fabricante %>"  readonly><br>
+                            <input class="form-control" type="text" name="formato" placeholder="Insira o formato da máscara" value="<%= mascara.formato %>" ><br>
+                            <input class="form-control" type="text" name="divisor" placeholder="Insira o divisor de valores da mascara" value="<%= mascara.divisor %>" ><br>               
+                            <input class="form-control" type="text" name="qtdpos" placeholder="A partir de 0, informe a posição da quantidade na máscara" value="<%= mascara.quantidadePos %>" ><br>           
+                            <input class="form-control" type="text" name="reallPos" placeholder="A partir de 0, informe a posição do Reel Id na máscara" value="<%= mascara.reallPos %>" ><br>        
+                            <input class="form-control" type="text" name="partNumberPos" placeholder="A partir de 0, informe a posição do Part Number na máscara" value="<%= mascara.partNumberPos %>" ><br>       
+                            <input class="form-control" type="text" name="lotePos" placeholder="A partir de 0, informe a posição do Lote na máscara" value="<%= mascara.lotePos %>" ><br> 
+                    
+                            <input type="hidden" name="id_fabricante" value="<%= mascara.fabricanteId %>">
+                            <input type="hidden" name="id" value="<%= mascara.id %>">
+                            
+
+                            <br><br>
+                            <button class="btn btn-primary">Editar</button>
+                            
+                        </form>
+            </div>
+           
+          
+    </div>
+   
+</div>
+
+<script src=/scripts/jquery.js></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+</html>

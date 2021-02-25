@@ -1,0 +1,109 @@
+<%- include ('../partials/header.ejs') %>
+
+<div class="container"> 
+    <br>
+    <a class="btn btn-success" href="/fabricantes/new">Fabricantes</a>
+    <br><br>
+    <h2>Vincular Partnumber</h2>
+  
+    <form method="POST" action="/pastnumber/vinc/" > 
+    <div class="row">
+         
+        <div class="form-group name1 col-md-4">
+           
+            <input type="text" class="form-control" id="name" aria-describedby="emailHelp" name="muverName">
+        </div>
+
+        <div class="form-group name2 col-md-4">
+          
+            <select name="fabricantes" id="mapas" name="mapas" class="form-control">
+                <% fabricantes.forEach(fabricante => { %>
+                  <option value="<%= fabricante.id %>"> <%= fabricante.descricao %></option>
+                <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group name3 col-md-4">                               
+            <button class="btn btn-primary form-control"> Vincular</button>
+        </div>
+
+    </div>
+
+</form>
+
+<form action="/fileupload" method="post" enctype="multipart/form-data">
+    <h5>Ou selecione um Arquivo .XLSX para fazer as vinculações automáticas</h5>
+    <br>
+    <input type="file" id="filetoupload" name="filetoupload"><br>
+    <input type="submit">
+  </form>
+       
+      
+
+
+    <hr>
+    <h2>Part Numbers</h2> 
+    <hr>
+
+    <table class="table table-bordered"> 
+        <thead>
+            <tr>
+                <th> ID </th>
+                <th> Código </th>
+                <th> Fabricante </th>
+               
+            </tr>
+        </thead>
+        <tbody>
+
+           <% partnumbers.forEach(article => { %>
+            <tr>
+                <td> <%=article.id %> </td>
+                <td> <%=article.codigo %>  </td>               
+                <td> <%=article.fabricante.descricao %>  </td>
+                
+                <td> 
+
+                
+                    <form method="GET" action="/partnumber/edit/<%= article.id %>" style="display: inline;">                                     
+                            <button class="btn btn-warning"> Editar</button>
+                    </form>
+                    
+                    <form method="POST" action="/partnumber/delete" style="display: inline;" onsubmit="confirmarDelecao(event, this)"> 
+                            <input type="hidden" name="id" value="<%= article.id %>">
+                            <button class="btn btn-danger"> Remover</button>
+                    </form> </th>
+                </td>
+            </tr>
+
+           <% }) %> 
+           
+           
+        </tbody>
+
+
+    </table>
+
+</div>
+
+<script>
+
+    function confirmarDelecao(event,form){
+        event.preventDefault();
+        var decision = confirm("Você quer deletar este Fabricante?");
+         if(decision){
+             form.submit();
+         }
+
+    }
+
+
+    if("<%= erro %>" != ""){
+        alert("<%= erro %>" );
+    }
+
+</script>
+
+<script src=/scripts/jquery.js></script>
+<script src=/scripts/fabricantesScripts.js></script>
+<%- include ('../partials/footer.ejs') %>

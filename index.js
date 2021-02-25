@@ -4,11 +4,19 @@ const app = express();
 const bodyparser = require("body-parser");
 const session = require("express-session");
 
+const conn = require("./database/database");
 
 const loginRoutes = require("./Login/LoginRoutes");
 const operacoesRoutes = require("./Operacao/OperacaoRouters");
 const maquinasRoutes = require("./Maquinas/MaquinaRoutes");
 const realimentacaoRoutes = require("./Realimentacao/RealimentacaoRoutes");
+const alimentacaoRoutes = require("./Alimentacao/AlimentacaoRoutes");
+
+const MarcarasoRoutes = require("./Models/MascaraController");
+
+const Fabricantes = require("./Models/Fabricantes");
+const Mascaras = require("./Models/Mascaras");
+const Partnumbers = require("./Models/Partnumbers");
 
 app.use(cors())
 
@@ -32,7 +40,7 @@ app.use(session({
 
 
 //body parser
-app.use(bodyparser.urlencoded({extended: false}))
+app.use(bodyparser.urlencoded({extended: true}))
 app.use(bodyparser.json());
 
 
@@ -41,6 +49,14 @@ app.use("/",loginRoutes);
 app.use("/",operacoesRoutes);
 app.use("/",maquinasRoutes);
 app.use("/",realimentacaoRoutes);
+app.use("/",alimentacaoRoutes);
+app.use("/", MarcarasoRoutes);
+
+//Cria Tabelas
+    Mascaras.sync();
+    Fabricantes.sync();
+    Partnumbers.sync();
+  
 
 
 //static
@@ -51,6 +67,6 @@ app.get("/",(req,res) => {
 })
 
 
-app.listen(8000,'192.168.0.6',() => {
+app.listen(3500,"0.0.0.0",() => {
     console.log("Servidor Rodando");
 })

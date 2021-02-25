@@ -1,0 +1,75 @@
+<%- include ('../partials/header.ejs') %>
+
+<div class="container">
+
+  
+ 
+  <br>
+    <div class="card">
+            <div class="card-header mx-auto">
+                   
+                    <% if ( tipo == 3){ %>
+
+                        <h2>Alimentação - <%=maquina%></h2>
+
+                    <% } else { %>
+
+                        <h2>Conferência - <%=maquina%></h2>
+
+                    <% } %>
+                    
+                    
+            </div>
+            <div class="card-body">
+                   
+                            <input type="hidden" id="maquina" value="<%= maquina%>"> 
+                            <input type="hidden" id="posicoes" value="<%= posicoes%>">                         
+
+                             
+                                    <label for="posicao">Posição :</label>
+                                    <input class="form-control" type="text" name="posicao" id="posicao" placeholder="Posição"><br>                               
+                              
+
+                            <label for="produtoEsperado" id="produtoEsperado" value=""></label>
+                            <input class="form-control" type="text" name="produto" id="produto" placeholder="Produto" ><br>
+                            <input class="form-control" type="number" name="quantidade" id="quantidade" placeholder="Quantidade"><br>                        
+                            <input class="form-control" type="text" name="reelid" id="reelid" placeholder="Reel ID"><br> 
+                            
+
+                            <div class="row">
+
+                                <% if ( tipo == 3){ %>
+
+                                    <button id="btnAlimentar" class="btn btn-primary">Alimentar</button>
+            
+                                <% } else { %>
+            
+                                    <button id="btnAlimentar" class="btn btn-primary">Conferir</button>
+            
+                                <% } %>
+                                
+
+                                <form method="POST" id="btnAbortar" style= "display:inline-block; padding-left: 12px; padding-right: 12px;" action="/finalizaConferenciaAlim/2">
+                                    <button class="btn btn-primary">Abortar</button>
+                                 </form> 
+                                
+                                <button id="btnLimpar" class="btn btn-primary">Limpar</button>
+                                <h2 id="contador" style="position: absolute; right: 5%;"> 1 </h2>
+      
+                            </div>                        
+                            
+
+                            <form method="get" action="/chamaFinalizar" id="btnFinaliza" style="margin-right: 5%; "></form>
+                                <input type="submit" value="Add user" hidden />
+                            </form>
+           
+            </div>
+           
+          
+    </div>
+   
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src=/scripts/AlimentacaoScript.js></script>
+<%- include ('../partials/footer.ejs') %>

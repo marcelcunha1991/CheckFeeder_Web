@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Ficha Técnica</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+   
+
+  </head>
+
+<div class="container">
+
+ 
+  <br>
+    <div class="card">
+            <div class="card-header">
+                   
+                        <h2>Editar Fabricante</h2>
+                    
+            </div>
+            <div class="card-body">
+                    <form  method="POST" action="/fabricantes/update">
+                            <input class="form-control" type="text" name="descricao" placeholder="Insira um nome Para a Máquina" value="<%= fabricantes.descricao %>"><br>
+                            <input class="form-control" type="text" name="codigo" placeholder="Insira um código Para a Máquina" value="<%= fabricantes.codigo %>"><br>
+                           
+                            <input type="hidden" name="id" value="<%= fabricantes.id %>">
+                            
+
+                         
+                            <br>
+                            <button class="btn btn-primary">Editar</button>
+                        </form>
+            </div>
+           
+          
+    </div>
+   
+</div>
+
+<script src=/scripts/jquery.js></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+</html>

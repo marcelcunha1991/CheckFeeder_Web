@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Checkfeeder</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+
+  </head>
+
+<div class="container"> 
+
+    <hr>
+    <h2>Fabricantes</h2> 
+    <a class="btn btn-success" href="/fabricantes/new_fab"> Insera um novo Fabricante</a>
+    <hr>
+
+    <table class="table table-bordered"> 
+        <thead>
+            <tr>
+                <th> ID </th>
+                <th> Fabricante </th>
+                <th> Código </th>
+               
+               
+            </tr>
+        </thead>
+        <tbody>
+
+           <% fabricantes.forEach(article => { %>
+            <tr>
+                <td> <%=article.id %> </td>
+                <td> <%=article.descricao %>  </td>               
+                <td> <%=article.codigo %>  </td>
+                
+                <td> 
+
+                    <form method="GET" action="/mascaras/edit/<%= article.id %>" style="display: inline;">                                     
+                        <button class="btn btn-primary"> Máscara</button>
+                    </form>
+                    <form method="GET" action="/fabricantes/edit/<%= article.id %>" style="display: inline;">                                     
+                            <button class="btn btn-warning"> Editar</button>
+                    </form>
+                    
+                    <form method="POST" action="/fabricantes/delete" style="display: inline;" onsubmit="confirmarDelecao(event, this)"> 
+                            <input type="hidden" name="id" value="<%= article.id %>">
+                            <button class="btn btn-danger"> Remover</button>
+                    </form> </th>
+                </td>
+            </tr>
+
+           <% }) %> 
+           
+           
+        </tbody>
+
+
+    </table>
+
+</div>
+
+<script>
+
+    function confirmarDelecao(event,form){
+        event.preventDefault();
+        var decision = confirm("Você quer deletar este Fabricante?");
+         if(decision){
+             form.submit();
+         }
+
+    }
+
+</script>
+
+<script src=/scripts/jquery.js></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+</html>
+

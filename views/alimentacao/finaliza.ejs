@@ -1,0 +1,40 @@
+<%- include ('../partials/header.ejs') %>
+
+<div class="container">
+
+  
+ 
+  <br>
+    <div class="card">
+            <div class="card-header mx-auto">
+                   
+                    <h2> FINALIZA OPERAÇÃO</h2>
+                    
+            </div>
+            <div class="card-body">
+                   
+                         
+                <h2> DESEJA FINALIZAR A OPERAÇÃO ?</h2>
+
+             
+                    
+                    <form method="POST" style= display:inline-block;" action="/finalizaConferenciaAlim/1">
+                        <button  class="btn btn-primary btn-inline" style="margin-right: 12px; display:inline-block;" id="btnConcluir">CONCLUIR</button>
+                     </form> 
+                     <form method="POST" style= display:inline-block;" action="/finalizaConferenciaAlim/2">
+                        <button  class="btn btn-primary btn-inline" style="margin-right: 12px; display:inline-block;" id = "btnAbortar">ABORTAR</button>
+                     </form> 
+                   
+
+                 
+                       
+            </div>
+           
+          
+    </div>
+   
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<%- include ('../partials/footer.ejs') %>

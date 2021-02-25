@@ -14,6 +14,8 @@ router.post("/authenticate",(req,res) => {
         client.getUsuarioCODTO(args, function(err, result) {
             if(result.return.idUsuario != "0"){
 
+                req.session.userid = result.return.idUsuario;
+
                 res.redirect("maquinas");
             }
             
