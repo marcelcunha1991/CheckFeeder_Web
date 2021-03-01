@@ -7,7 +7,8 @@ const conn = new Sequelize('checkfeeder','root','sa123',{
     host: 'localhost',
     dialect: 'mysql',
     port:3307,
-    timezone:"-04:00"
+    timezone:"-04:00",
+    logging: false
 })
 
 // PARAMETROS DE CONEXAO PARA BANCO SQLSERVER - OPCAO 01

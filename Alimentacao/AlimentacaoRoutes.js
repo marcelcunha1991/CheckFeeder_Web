@@ -34,8 +34,8 @@ router.get("/alimentacao/:maquina/:tipo", (req,res) => {
     userGlobal = req.session.userid;
   
 
-    console.log(req.params.tipo);
-    console.log(req.params.maquina);
+    console.log(req.session.posicoes.return.posicoes);
+    console.log(todasPosicoes);
     console.log(req.session.posicoes);
     console.log(req.session.config);
 
@@ -54,7 +54,7 @@ router.get("/alimentacao/:maquina/:tipo", (req,res) => {
 
 
 router.get("/getPosicoes", (req,res) => {
-    console.log(req.session.posicoes.return.posicoes)
+  
 
     var response = {
         status  : 200,
@@ -67,7 +67,7 @@ router.get("/getPosicoes", (req,res) => {
 })
 
 router.get("/getPosicoesCount", (req,res) => {
-    console.log(req.session.posicoes.return.posicoes.length.toString())
+   
     res.send(req.session.posicoes.return.posicoes.length.toString());
     
 })
@@ -89,15 +89,13 @@ router.get("/getPosicao/:itemAtual", (req,res) => {
 })
 
 router.get("/chamaFinalizar", (req,res) => {
-    console.log("AlimentacaoRouter ");
- 
 
     res.render("alimentacao/finaliza");
 })
 
 
 router.post("/finalizaConferenciaAlim/:status", (req,res) => {
-    console.log("Entrou na finalizacao");
+   
     var date = new Date();
 
     var status = parseInt(req.params.status);
@@ -124,7 +122,7 @@ router.post("/finalizaConferenciaAlim/:status", (req,res) => {
     }
 
     
-    console.log(data)
+  
     axios.post(url+"/idw/rest/cfwsr/setconferenciaoupre",data).then(result => {
 
         const getCircularReplacer = () => {
@@ -141,7 +139,7 @@ router.post("/finalizaConferenciaAlim/:status", (req,res) => {
           };
 
         leituras = [];
-        console.log("Resultado s " + JSON.stringify(result, getCircularReplacer()));
+       
         res.redirect("/")
     })
 })
@@ -149,44 +147,76 @@ router.post("/finalizaConferenciaAlim/:status", (req,res) => {
 
 router.get("/returnPartNumber/:valorLido",(req,res) => {
     
-    var partnumber  = req.params.valorLido;
+    var partnumber;
 
-    PartNumbers.findAll({
-        where:{
-            codigo: req.params.valorLido
-        },
-        include:Fabricantes,Mascaras
+    if(req.params.valorLido.includes(",")){
+        partnumber = req.params.valorLido.split(",")
+    }else if(req.params.valorLido.includes("@")){
+        partnumber = req.params.valorLido.split("@")
+    }else if(req.params.valorLido.includes(";")){
+        partnumber = req.params.valorLido.split(";")
+    }else if(req.params.valorLido.includes("!")){
+        partnumber = req.params.valorLido.split("!")
+    }else if(req.params.valorLido.includes("#")){
+        partnumber = req.params.valorLido.split("#")
+    }
 
-    }).then(partnumbers =>{
 
-        partnumbers.forEach(pt => {
+    if(partnumber.length == 0){
+        var response = {
+            status  : 200,
+            success : ""
+        }                          
 
-            Mascaras.findByPk(pt.fabricante.mascaraId).then(mascara => {
+        res.send(JSON.stringify(response));
 
-             
-                if(partnumber.includes(mascara.divisor)){
+    }else{
 
-                    var response = {
-                        status  : 200,
-                        success : req.params.valorLido.split(mascara.divisor)[mascara.partNumberPos]
-                    }                          
+        partnumber.forEach(element => {
+
+            PartNumbers.findAll({
+                where:{
+                    codigo: element
+                },
+                include:Fabricantes,Mascaras
         
-                    res.send(JSON.stringify(response));
-                  
-                }               
-    
+            }).then(partnumbers =>{
+        
+                if(partnumbers.length != 0){
+                      
+                
+                        console.log(partnumbers[0]);
+                        Mascaras.findByPk(partnumbers[0].fabricante.mascaraId).then(mascara => {            
+                         
+                            if(req.params.valorLido.includes(mascara.divisor)){
+            
+                                var response = {
+                                    status  : 200,
+                                    success : req.params.valorLido.split(mascara.divisor)[mascara.partNumberPos],
+                                    qtd: req.params.valorLido.split(mascara.divisor)[mascara.quantidadePos],
+                                    lote: req.params.valorLido.split(mascara.divisor)[mascara.lotePos],
+                                    reelId: req.params.valorLido.split(mascara.divisor)[mascara.reallPos],
+                                }                          
+                    
+                                res.send(JSON.stringify(response));
+                              
+                            }               
+                
+                        })
+            
+                }
+                
+               
             })
-
         })
-       
-    })
+    }
+   
 
 })
 
 router.post("/setCorrente", (req,res) => {
 
-    console.log("setCorrente", req);
-
+   
     var data = new Date();
 
     let dataFormatada = data.getFullYear() +"-"+
@@ -200,26 +230,13 @@ router.post("/setCorrente", (req,res) => {
     var cbRap = req.body.cbRap;
     var idUsuario =  req.session.userid;
     var isRealimentacao = false;
+
     var valorLido = req.body.valorLido;
-   
 
-
-    PartNumbers.findOne({
-        where:{
-            codigo: valorLido
-        },
-        include:Fabricantes,Mascaras
-    }).then(partnumber =>{
-
-        Mascaras.findByPk(partnumber.fabricante.mascaraId).then(mascara => {
-
-
-        var dados = valorLido.split(mascara.divisor);
-
-        var qtAlimentada = dados[parseInt(mascara.quantidadePos)].replace(/\D/g,'');
-        var cbNumeroLote = dados[parseInt(mascara.reallPos)];
-        var cbInformacoes = dados[parseInt(mascara.reallPos)];
-        var cdProduto = dados[parseInt(mascara.partNumberPos)];
+        var qtAlimentada = req.body.qtd.replace(/\D/g,'');
+        var cbNumeroLote = req.body.lote;
+        var cbInformacoes = req.body.reelId;
+        var cdProduto = valorLido;
 
         var posicaoASerLida = {
             cdFeeder: todasPosicoes[parseInt(req.body.indexPosicaoAtual)].cdFeeder,
@@ -287,24 +304,16 @@ router.post("/setCorrente", (req,res) => {
                 };
               };
 
-
-            console.log("Resultado s " + JSON.stringify(result, getCircularReplacer()));
             res.send(JSON.stringify(result, getCircularReplacer()));
         })
 
-
-        })
-      
     })
 
 
        
-})
 
 
 router.post("/setCorrenteManual", (req,res) => {
-
-    console.log("setCorrenteManual", req);
 
     var data = new Date();
 
@@ -388,7 +397,6 @@ router.post("/setCorrenteManual", (req,res) => {
                 };
               };
 
-            console.log("Resultado s " + JSON.stringify(result, getCircularReplacer()));
             res.send(JSON.stringify(result, getCircularReplacer()));
         })
 
@@ -400,14 +408,9 @@ router.post("/checaProdutoAtivo/:cdProduto", (req,res) => {
     var cdProduto = req.params.cdProduto;
 
     var args = {arg0: cdProduto};
-
-
-    console.log("Checa Produto");
    
     soap.createClient(process.env.CFWEBSERVICE, function(err, client) {        
         client.getProdutoByCdEStAtivo(args,function(err, result) {     
-            
-            console.log(result);
 
             var response = {
                 status  : 200,

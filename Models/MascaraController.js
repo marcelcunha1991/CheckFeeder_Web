@@ -88,15 +88,16 @@ function VinculaPartNumbers(rows,i){
         // `rows` is an array of rows
         // each row being an array of cells.
 
-           
-                console.log("Buscando " +  rows[i][24])
+                console.log("Posição: " + i)
+                console.log("Linha: " + rows[i])
+                console.log("Buscando: " +  rows[i][24])
+               
 
                 Fabricantes.findOne({
                     where:{
                         descricao: rows[i][24]
                     }
                 }).then(result => {
-                    console.log(result)
 
                     if(result == null){
                             Fabricantes.create({
@@ -104,28 +105,42 @@ function VinculaPartNumbers(rows,i){
                                 codigo: rows[i][24]                     
                             }).then(fabricante => {
                                 console.log( "Novo fabricante " + rows[i][24]  + "  " + rows[i][1])
-                                PartNumbers.create({
-                                    codigo: rows[i][1],
-                                    fabricanteId: fabricante.id,
-                                 
-                                })
+                                if(rows[i][1] != ""){
+                                    PartNumbers.create({
+                                        codigo: rows[i][1],
+                                        fabricanteId: fabricante.id,
+                                     
+                                    })
+                                }else{
+                                    console.log("Código Vazio, operação Cancelada");
+                                }
+                               
                                 
                             })
 
-                            if(i<= rows.length){
-                                VinculaPartNumbers(rows,i+1)
+                            if(i < rows.length-1){
+                                setTimeout(function() {
+                                    VinculaPartNumbers(rows,i+1)
+                                }, 600);
+                                
                             }
                             
                            
                         }else{
                             console.log( "fabricante Existente " + rows[i][24]  + "  " + rows[i][1])
-                            PartNumbers.create({
-                                codigo: rows[i][1],
-                                fabricanteId: result.id,
-                             
-                            })
-                            if(i<= rows.length){
-                                VinculaPartNumbers(rows,i+1)
+                            if(rows[i][1] != ""){
+                                PartNumbers.create({
+                                    codigo: rows[i][1],
+                                    fabricanteId: result.id,
+                                 
+                                })
+                            }else{
+                                console.log("Código Vazio, operação Cancelada");
+                            }
+                            if(i < rows.length-1){
+                                setTimeout(function() {
+                                    VinculaPartNumbers(rows,i+1)
+                                }, 600);
                             }
                         }                       
                 })

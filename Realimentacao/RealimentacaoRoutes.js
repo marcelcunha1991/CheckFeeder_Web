@@ -87,22 +87,10 @@ router.post("/setRealimentacao", (req,res) => {
     var isRealimentacao = false;
     var valorLido = req.body.valorLido;
 
-
-    PartNumbers.findOne({
-        where:{
-            codigo:  valorLido
-        },
-        include:Fabricantes,Mascaras
-    }).then(partnumber =>{
-
-        Mascaras.findByPk(partnumber.fabricante.mascaraId).then(mascara => {
-
-            var dados = valorLido.split(mascara.divisor);
-
-            var qtAlimentada = dados[parseInt(mascara.quantidadePos)].replace(/\D/g,'');
-            var cbNumeroLote = dados[parseInt(mascara.reallPos)];
-            var cbInformacoes = dados[parseInt(mascara.reallPos)];
-            var cdProduto = dados[parseInt(mascara.partNumberPos)];
+    var qtAlimentada = req.body.qtd.replace(/\D/g,'');
+    var cbNumeroLote = req.body.lote;
+    var cbInformacoes = req.body.reelId;
+    var cdProduto = valorLido;
 
             var posicaoASerLida = {
                 cdFeeder: todasPosicoes[parseInt(req.body.indexPosicaoAtual)].cdFeeder,
@@ -170,9 +158,7 @@ router.post("/setRealimentacao", (req,res) => {
                     res.redirect("/")
                 })
 
-        })
-
-    })
+     
 
 
 

@@ -97,33 +97,58 @@ $(document).on('keypress',function(e) {
 
 
             $.ajax({  
-                url:'/setRealimentacao',  
-                method:'post',  
-                dataType:'json',
-                data:{                                 
-                    maquina: $('#maquina').val(),
-                    produtoAtualEsperado : produtoAtualEsperado,
-                    valorLido: valorLido,
-                    cbRap : cbRap,                              
-                    indexPosicaoAtual : posicaoAtual
+                url:'/returnPartNumber/'+valorLido,  
+                method:'get',  
+                dataType:'json',            
+                success:function(partNumber){
+    
+                    console.log("partNumber " + partNumber.success)        
+                    console.log("Produto Esperado " + produtoAtualEsperado)    
 
-                },success:function(data){
-
-                    console.log("RESULTADO DA PORRA da Realimentacao: ", data)
-
-                    
-                        posicaoAtual = posicaoAtual + 1;                        
-                        console.log("Posicao Atual " + posicaoAtual);
-
-                        if (posicaoAtual+1 > posicoes){
-                           $('#btnFinaliza').submit()
-                        }else{
-                           getPosicao();
-                        }                                                                
-                }
-                
+                    if(produtoAtualEsperado == partNumber.success){
+                           
+                           console.log("Entrou na validacao do checa produto");
+                                                       
+                                        $.ajax({  
+                                            url:'/setRealimentacao',
+                                            method:'post',  
+                                            dataType:'json',
+                                            data:{                                 
+                                                maquina: $('#maquina').val(),
+                                                produtoAtualEsperado : produtoAtualEsperado,
+                                                valorLido: partNumber.success,
+                                                qtd: partNumber.qtd,
+                                                lote: partNumber.lote,
+                                                reelId: partNumber.reelId,
+                                                cbRap : cbRap,
+                                                indexPosicaoAtual : posicaoAtual                                     
                
-            }); 
+               
+                                            },success:function(data){
+
+                                                console.log("RESULTADO DA PORRA da Realimentacao: ", data)                            
+                                                
+                                                    posicaoAtual = posicaoAtual + 1;                        
+                                                    console.log("Posicao Atual " + posicaoAtual);
+                            
+                                                    if (posicaoAtual+1 > posicoes){
+                                                       $('#btnFinaliza').submit()
+                                                    }else{
+                                                       getPosicao();
+                                                    }                                                                
+                                            }
+                                           
+                                        }); 
+
+                }else{
+                    alert("Produto inserido não condiz com o esperado");
+                }
+
+    
+                }
+    
+            })
+         
 
             contador = contador + 1;
 
