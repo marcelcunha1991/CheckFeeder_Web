@@ -1,8 +1,6 @@
 const Sequelize = require("sequelize");
 const conn = require("../database/database");
 
-
-
 const Mascaras = conn.define('mascaras',{
     formato:{
         type: Sequelize.STRING,

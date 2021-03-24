@@ -64,7 +64,9 @@ $(document).on('keypress',function(e) {
   
     if(e.which == 13) {   
         console.log("entrando no modo enter")
+
         if($("#posicao").is($(':focus'))){
+            
             console.log("entrando no modo enter")
             var contemNoMapa = 0;
             console.log(posicoesLidas.includes($("#posicao").val()));
@@ -102,7 +104,7 @@ $(document).on('keypress',function(e) {
 
                 if($("#quantidade").val() == ""){
                     $.ajax({  
-                        url:'/returnPartNumber/'+valorLido,  
+                        url:'/returnPartNumber/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
                         method:'get',  
                         dataType:'json',            
                         success:function(partNumber){
@@ -110,7 +112,7 @@ $(document).on('keypress',function(e) {
                             console.log("partNumber " + partNumber.success)        
                             console.log("Produto Esperado " + produtoAtualEsperado)    
 
-                            if(produtoAtualEsperado == partNumber.success){
+                            if(partNumber.success != ""){
 
                             $.ajax({  
                                 url:'/checaProdutoAtivo/'+ partNumber.success ,  
@@ -159,6 +161,7 @@ $(document).on('keypress',function(e) {
                                                                $('#btnFinaliza').submit()
                                                             }else{
                                                                // getPosicao();
+                                                               posicoesLidas.push($("#posicao").val());
                                                                $("#posicao").focus();
                                                                $('#produtoEsperado').text("Produto Esperado: " );
                                                                $('#posicao').val("");

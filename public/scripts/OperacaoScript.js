@@ -317,3 +317,50 @@ $( '#cdMapa' ).focus(function() {
     })
 
 
+    $('#btnIdentificacao').click(function(e) {
+      var maquina = $( '#maquina' ).val(); 
+      var mapa = $( "#mapas option:selected" ).text();
+
+      e.preventDefault();
+
+      console.log('/isMapaValido/'+maquina +"/"+mapa.replace(" ",""))
+
+      $.ajax({  
+        url:'/isMapaValido/'+maquina +"/"+mapa,  
+        method:'post',          
+        dataType:'json',
+        success:function(data) {
+
+          console.log("retorno: ",data)
+
+          if(data.return == false){
+            alert("Relação Máquina e Mapa inválida. Informe máquina e mapa válidos ou procure o administrador do sistema.")
+          }else{
+        
+            $.ajax({  
+
+              url:'/getPosicoesCODTO/'+maquina +"/"+mapa +"/"+true,  
+              method:'post',  
+              dataType:'json',
+              success:function(data) {
+
+                console.log("POSICPES",data)
+                posicoes = data.return.posicoes;
+                
+                $('#btnIdentificacao').submit();                
+
+                console.log("Posicoes:", posicoes);    
+
+              }
+
+          });    
+            
+          }
+          
+          console.log("data" , data.return)
+        }
+    }); 
+
+    })
+
+

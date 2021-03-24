@@ -8,6 +8,8 @@ var PartNumbers = require("./Partnumbers");
 var formidable = require('formidable');
 var fs = require('fs');
 
+var ultimoPartnumber;
+
 const readXlsxFile = require('read-excel-file/node');
 
 
@@ -33,6 +35,35 @@ router.get("/fabricantes",  (req,res) => {
 })
 
 
+router.get('/buscapn/:pt?', function(req, res, next){
+
+    var partnumber = req.params.pt;
+
+        PartNumbers.findOne({
+            where:{
+                codigo:partnumber
+            },
+            include: Fabricantes
+        }).then(result => {
+    
+            var response = {
+                status  : 200,
+                success : result
+             
+            }                          
+    
+                res.send(JSON.stringify(response));
+        
+        })
+    
+
+
+   
+
+
+
+})
+
 router.post('/fileupload', function(req, res, next){
  
     var form = new formidable.IncomingForm();
@@ -44,12 +75,12 @@ router.post('/fileupload', function(req, res, next){
 
         fs.rename(oldpath, newpath, function (err) {
             if (err) throw err;
-            
+            readXlsxFile('C:/idw_svn/CheckFeeder Web/files/' + files.filetoupload.name).then((rows) => {
+                VinculaPartNumbers(rows,1);
+              })
            
           });
-          readXlsxFile('C:/idw_svn/CheckFeeder Web/files/' + files.filetoupload.name).then((rows) => {
-            VinculaPartNumbers(rows,1);
-          })
+         
           
 
           res.redirect("/fabricantes");
@@ -82,15 +113,14 @@ router.post('/fileupload', function(req, res, next){
 });
 
 
+
+
 function VinculaPartNumbers(rows,i){
 
 
-        // `rows` is an array of rows
-        // each row being an array of cells.
-
                 console.log("Posição: " + i)
-                console.log("Linha: " + rows[i])
-                console.log("Buscando: " +  rows[i][24])
+                // console.log("Linha: " + rows[i])
+                // console.log("Buscando: " +  rows[i][24])
                
 
                 Fabricantes.findOne({
@@ -100,19 +130,59 @@ function VinculaPartNumbers(rows,i){
                 }).then(result => {
 
                     if(result == null){
+
                             Fabricantes.create({
                                 descricao: rows[i][24],
                                 codigo: rows[i][24]                     
                             }).then(fabricante => {
-                                console.log( "Novo fabricante " + rows[i][24]  + "  " + rows[i][1])
-                                if(rows[i][1] != ""){
+
+                                console.log( i + " Novo fabricante " + rows[i][24]  + "  " + rows[i][1])
+
+                                if(rows[i][1] != null){
+
+                                    ultimoPartnumber = rows[i][1];
+
                                     PartNumbers.create({
                                         codigo: rows[i][1],
                                         fabricanteId: fabricante.id,
                                      
                                     })
+
+                                    if(rows[i][24] == "WALSIN"){
+                                        Fabricantes.create({
+                                            descricao: "WTC",
+                                            codigo: "WTC"                     
+                                        }).then(result => {
+                                            PartNumbers.create({
+                                                codigo: rows[i][1],
+                                                fabricanteId: result.id,
+                                             
+                                            })
+                                        })
+                                    }
+
+                                  
                                 }else{
-                                    console.log("Código Vazio, operação Cancelada");
+                                    console.log(i + " Código Vazio, Repetindo o ultimo lido com outro fabricante");
+
+                                    PartNumbers.create({
+                                        codigo: ultimoPartnumber,
+                                        fabricanteId: fabricante.id,
+                                     
+                                    })
+
+                                    if(rows[i][24] == "WALSIN"){
+                                        Fabricantes.create({
+                                            descricao: "WTC",
+                                            codigo: "WTC"                     
+                                        }).then(result => {
+                                            PartNumbers.create({
+                                                codigo: ultimoPartnumber,
+                                                fabricanteId: result.id,
+                                             
+                                            })
+                                        })
+                                    }
                                 }
                                
                                 
@@ -127,15 +197,54 @@ function VinculaPartNumbers(rows,i){
                             
                            
                         }else{
-                            console.log( "fabricante Existente " + rows[i][24]  + "  " + rows[i][1])
-                            if(rows[i][1] != ""){
+                            
+                            if(rows[i][1] != null){
+                                console.log( i + " fabricante Existente " + rows[i][24]  + "  " + rows[i][1])
+                                ultimoPartnumber = rows[i][1];
+
                                 PartNumbers.create({
                                     codigo: rows[i][1],
                                     fabricanteId: result.id,
                                  
                                 })
+
+                                if(rows[i][24] == "WALSIN"){
+
+                                    Fabricantes.findOne({
+                                        where:{
+                                            descricao: "WTC"
+                                        }
+                                    }).then(fb => {
+
+                                        PartNumbers.create({
+                                            codigo: rows[i][1],
+                                            fabricanteId: fb.id,
+                                         
+                                        })
+                                    })
+                                    
+                                }
                             }else{
-                                console.log("Código Vazio, operação Cancelada");
+                                console.log(i + " Código Vazio, Repetindo o ultimo lido com outro fabricante");
+                                console.log( i + " fabricante Existente " + rows[i][24]  + "  " + ultimoPartnumber)
+                                    PartNumbers.create({
+                                        codigo: ultimoPartnumber,
+                                        fabricanteId: result.id,
+                                     
+                                    })
+
+                                    if(rows[i][24] == "WALSIN"){
+                                        Fabricantes.create({
+                                            descricao: "WTC",
+                                            codigo: "WTC"                     
+                                        }).then(result => {
+                                            PartNumbers.create({
+                                                codigo: ultimoPartnumber,
+                                                fabricanteId: result.id,
+                                             
+                                            })
+                                        })
+                                    }
                             }
                             if(i < rows.length-1){
                                 setTimeout(function() {
@@ -146,7 +255,6 @@ function VinculaPartNumbers(rows,i){
                 })
                 
             
-     
 
 
 
@@ -381,7 +489,7 @@ router.post("/pastnumber/update",(req,res) => {
     var id = req.body.id;
 
     PartNumbers.update({
-        fabricantes:fabricantes,
+        fabricanteId:fabricantes,
         codigo: codigo
     },{
         where:{

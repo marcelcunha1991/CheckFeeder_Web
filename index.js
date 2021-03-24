@@ -11,7 +11,7 @@ const operacoesRoutes = require("./Operacao/OperacaoRouters");
 const maquinasRoutes = require("./Maquinas/MaquinaRoutes");
 const realimentacaoRoutes = require("./Realimentacao/RealimentacaoRoutes");
 const alimentacaoRoutes = require("./Alimentacao/AlimentacaoRoutes");
-
+const identificacaoRoutes = require("./Identificacao/IdentificacaoController");
 const MarcarasoRoutes = require("./Models/MascaraController");
 
 const Fabricantes = require("./Models/Fabricantes");
@@ -51,6 +51,7 @@ app.use("/",maquinasRoutes);
 app.use("/",realimentacaoRoutes);
 app.use("/",alimentacaoRoutes);
 app.use("/", MarcarasoRoutes);
+app.use("/",identificacaoRoutes);
 
 //Cria Tabelas
     Mascaras.sync();

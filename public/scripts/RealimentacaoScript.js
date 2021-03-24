@@ -97,7 +97,7 @@ $(document).on('keypress',function(e) {
 
 
             $.ajax({  
-                url:'/returnPartNumber/'+valorLido,  
+                url:'/returnPartNumber/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
                 method:'get',  
                 dataType:'json',            
                 success:function(partNumber){
@@ -105,7 +105,7 @@ $(document).on('keypress',function(e) {
                     console.log("partNumber " + partNumber.success)        
                     console.log("Produto Esperado " + produtoAtualEsperado)    
 
-                    if(produtoAtualEsperado == partNumber.success){
+                    if(partNumber.success != ""){
                            
                            console.log("Entrou na validacao do checa produto");
                                                        
@@ -151,7 +151,7 @@ $(document).on('keypress',function(e) {
          
 
             contador = contador + 1;
-
+                    $("#posicao").focus();
                     $('#contador').text(contador);
                     $('#produtoEsperado').text("Produto Esperado: " );
                     $('#produto').val("");

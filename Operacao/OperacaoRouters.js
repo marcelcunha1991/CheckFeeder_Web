@@ -102,23 +102,35 @@ router.post("/getPosicoesCODTO/:maquina/:mapa/:isUsarEspelhamento", (req,res) =>
                 arg1:mapa.replace(" ",""),
                 arg2:isUsarEspelhamento};    
 
+    var argsAlt = {arg0: maquina,
+                arg1:mapa.replace(" ","")};   
+
     // console.log(args)
 
     soap.createClient(process.env.CFWEBSERVICE, function(err, client) {        
         client.getPosicoesCODTO(args, function(err, result) {
 
-           
             req.session.posicoes = result;
             console.log("Session",req.session.posicoes.return.posicoes);
+
+            soap.createClient(process.env.CFWEBSERVICE, function(err, client) {        
+                client.getPosicaoAlternativos(argsAlt, function(err, resultAlt) {        
+                    console.log("Alternativos " + resultAlt)
+                    req.session.posicoesAlt = resultAlt;
+                    console.log("Session",req.session.posicoes.return.posicoes);
+                   
+                    res.send(result)
+        
+                });
+            }) 
            
-            res.send(result)
+          
 
         });
     })   
 
 
 })
-
 
 
 router.post("/validaPosicoes/:maquina/:mapa", (req,res) => {
@@ -186,6 +198,8 @@ router.post("/validaPosicoes/:maquina/:mapa", (req,res) => {
     })   
 
 })
+
+
 
 
 

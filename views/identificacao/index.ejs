@@ -1,0 +1,33 @@
+<%- include ('../partials/header.ejs') %>
+
+
+<div class="container">
+
+    <div class="card mt-4"> 
+     
+        <div class="card-header mx-auto">
+            <h2> Leia o código do componente</h2>
+        </div>        
+        <div class="card-body">
+            
+                <div class="form-group">
+                  <label for="cdMaquina">Componente</label>
+                  <input type="text" class="form-control" id="cdComponente" name="cdComponente" placeholder="Entre com o código do componente">   
+                </div>
+
+                <h4 id="contador"> Posições:  </h4>
+               
+                <br>
+                <div class="btn-group btn-group-lg " style="padding-top: 2%;" role="group" > 
+                    <button type="submit" class="btn btn-primary" style="margin-right: 5%;" id="buscar" >Buscar</button>                 
+                    <button class="btn btn-primary" style="float: right;">Limpar</button>                    
+                </div>  
+              
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src=/scripts/IdentificacaoScript.js></script>
+<%- include ('../partials/footer.ejs') %>

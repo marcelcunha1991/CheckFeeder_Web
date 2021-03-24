@@ -17,6 +17,9 @@ var url = "http://192.168.0.47:8080";
 // var url = "http://192.168.0.13:8081";
 
 
+var alternativos;
+
+
 
 router.get("/voltar",(req,res) =>{
     res.redirect("/operacoes/"+maquinaGlobal)
@@ -35,6 +38,8 @@ router.get("/realimentacao/:maquina", (req,res) => {
     console.log(req.params.maquina);
     console.log(req.session.posicoes);
     console.log(req.session.config);
+
+    alternativos = req.session.posicoesAlt;
 
     var maquina = req.params.maquina
 
