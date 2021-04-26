@@ -9,6 +9,8 @@ var userGlobal;
 var posicaoAatual;
 var leituras = []; 
 
+var soap = require('soap');
+
 var Mascaras = require("../Models/Mascaras");
 var Fabricantes = require("../Models/Fabricantes");
 var PartNumbers = require("../Models/Partnumbers");
@@ -160,15 +162,170 @@ router.post("/setRealimentacao", (req,res) => {
         
                     console.log("Resultado s " + JSON.stringify(result, getCircularReplacer()));
                     // res.send(JSON.stringify(result, getCircularReplacer()));
-                    res.redirect("/")
+
+                    var response = {
+                        status  : 200,
+                        success : JSON.stringify(result, getCircularReplacer())
+                    }                          
+            
+                    res.send(JSON.stringify(response));
+                   // res.redirect("/")
                 })
 
-     
+              
 
+})
 
-
+router.get("/returnPartNumberRealim/:valorLido", (req,res) => {
     
+    var partnumber;
+    var divisor;
+    
+    // if(req.session.posicoesAlt != undefined){
+    //     alternativos = req.session.posicoesAlt;
+    // }   
 
+    var leitura = req.params.valorLido.split("||");
+    
+    if(leitura[0].includes(",")){
+        partnumber = leitura[0].split(",")
+        divisor = ",";
+    }else if(leitura[0].includes("@")){
+        partnumber = leitura[0].split("@")
+        divisor = "@";
+    }else if(leitura[0].includes(";")){
+        partnumber = leitura[0].split(";")
+        divisor = ";";
+    }else if(leitura[0].includes("!")){
+        partnumber = leitura[0].split("!")
+        divisor = "!";
+    }else if(leitura[0].includes("#")){
+        partnumber = leitura[0].split("#")
+        divisor = "#";
+    }
+
+
+    if(partnumber.length == 0){
+        var response = {
+            status  : 200,
+            success : ""
+        }                          
+
+        res.send(JSON.stringify(response));
+
+    }else{
+
+        var position = partnumber.indexOf(leitura[1]);
+
+        if(position != -1){
+      
+            PartNumbers.findAll({
+                where:{
+                    codigo: partnumber[position]
+                },
+                include:[{ all: true, nested: true }]                    
+            }).then(async (pt) => {
+                if(pt.length != 0){
+                    var mascaraCorreta;
+
+                    for (var i = 0; i < pt.length; i++){
+                        if (pt[i].fabricante.mascara.partNumberPos == position && 
+                            pt[i].fabricante.mascara.divisor == divisor ) {
+                            mascaraCorreta = pt[i].fabricante.mascara;
+                        }
+                    }
+
+                    if(mascaraCorreta != null){
+                        let validacao = await validaProdutoAtivo(leitura[1]);
+
+                        if(validacao){
+                            var response = {
+                                status  : 200,
+                                success : leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.partNumberPos],
+                                qtd: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.quantidadePos],
+                                lote: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.lotePos],
+                                reelId: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.reallPos],
+                            }            
+                            
+                            console.log("Operação concluida com sucesso " + response)
+                            res.send(JSON.stringify(response));
+                        }
+                    }                        
+                }
+            })
+        }else{
+
+            var opcional = null;
+
+            for(var i = 1; i < alternativos.return.posicoes.length;i++){
+
+                if(alternativos.return.posicoes[i].cdFeeder == leitura[2] &&
+                    partnumber.indexOf(alternativos.return.posicoes[i].cdProduto) > -1
+                 ){
+                      
+                    opcional = alternativos.return.posicoes[i];
+                    console.log("achou opcional");
+
+                }
+            }
+			console.log("1");
+            if(opcional == null){
+			console.log("2");
+                var response = {
+                    status  : 200,
+                    success : ""
+                }                          
+        
+                res.send(JSON.stringify(response));
+
+            }else{
+				console.log("3");
+                var position = partnumber.indexOf(opcional.cdProduto);
+
+                PartNumbers.findAll({
+                    where:{
+                        codigo: opcional.cdProduto
+                    },
+                    include:[{ all: true, nested: true }]                    
+                }).then(async (pt) => {
+					console.log("4");
+                    if(pt.length != 0){
+						console.log("5");
+                        var mascaraCorreta;
+						console.log("6");
+                        for (var i = 0; i < pt.length; i++){
+                            if (pt[i].fabricante.mascara.partNumberPos == position && 
+                                pt[i].fabricante.mascara.divisor == divisor ) {
+
+                                mascaraCorreta = pt[i].fabricante.mascara;
+                            }
+                        }
+						console.log("7");
+                        if(mascaraCorreta != null){
+                            let validacao = await validaProdutoAtivo(opcional.cdProduto);
+							console.log("8");
+                            if(validacao){
+								console.log("9");
+                                var response = {
+                                    status  : 200,
+                                    success : leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.partNumberPos],
+                                    qtd: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.quantidadePos],
+                                    lote: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.lotePos],
+                                    reelId: leitura[0].split(mascaraCorreta.divisor)[mascaraCorreta.reallPos],
+                                }            
+
+                                console.log("Operação concluida com sucesso " + response)
+                                res.send(JSON.stringify(response));
+                            }
+                        }                        
+                    }
+                })
+
+            }
+            
+           
+        }
+    }
 })
 
 router.get("/getPosicaoRea/:itemAtual", (req,res) => {
@@ -176,5 +333,25 @@ router.get("/getPosicaoRea/:itemAtual", (req,res) => {
     res.send(todasPosicoes[req.params.itemAtual])
     
 })
+
+async function validaProdutoAtivo(cdProduto) {
+    let args = {arg0: cdProduto};
+  
+    try {
+      let client = await soap.createClientAsync(process.env.CFWEBSERVICE);
+
+      let result = await new Promise((resolve, reject) => {
+          client.getProdutoByCdEStAtivo(args, (err, result) => {
+              if (err) throw new Error(`Erro no client: ${err}`);
+  
+              resolve(result.return);
+          });
+      }).then(value => value);
+
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+}
 
 module.exports = router;

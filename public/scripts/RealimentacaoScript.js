@@ -55,7 +55,7 @@ $(document).on('keypress',function(e) {
 
     if(e.which == 13) {       
 
-        var valorLido = $("#produto").val();
+        var valorLido = $("#produto").val().replace(" ","");
 
         const valoresReais = valorLido.replace(";","").split(",");
 
@@ -92,20 +92,20 @@ $(document).on('keypress',function(e) {
             // alert('You pressed enter!');
             // $("#realimentar").submit()
 
-            var valorLido = $("#produto").val();
+            var valorLido = $("#produto").val().replace(" ","");
             const valoresReais = valorLido.replace(";","").split(",");
 
 
-            $.ajax({  
-                url:'/returnPartNumber/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
-                method:'get',  
-                dataType:'json',            
-                success:function(partNumber){
+            // $.ajax({  
+            //     url:'/returnPartNumberRealim/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
+            //     method:'get',  
+            //     dataType:'json',            
+            //     success:function(partNumber){
     
-                    console.log("partNumber " + partNumber.success)        
-                    console.log("Produto Esperado " + produtoAtualEsperado)    
+                    // console.log("partNumber " + partNumber.success)        
+                    // console.log("Produto Esperado " + produtoAtualEsperado)    
 
-                    if(partNumber.success != ""){
+                    if(valorLido.split("*")[0] != ""){
                            
                            console.log("Entrou na validacao do checa produto");
                                                        
@@ -116,10 +116,10 @@ $(document).on('keypress',function(e) {
                                             data:{                                 
                                                 maquina: $('#maquina').val(),
                                                 produtoAtualEsperado : produtoAtualEsperado,
-                                                valorLido: partNumber.success,
-                                                qtd: partNumber.qtd,
-                                                lote: partNumber.lote,
-                                                reelId: partNumber.reelId,
+                                                valorLido: valorLido.split("*")[0],
+                                                qtd: valorLido.split("*")[1],
+                                                lote: valorLido.split("*")[0],
+                                                reelId: valorLido.split("*")[0],
                                                 cbRap : cbRap,
                                                 indexPosicaoAtual : posicaoAtual                                     
                
@@ -130,6 +130,15 @@ $(document).on('keypress',function(e) {
                                                 
                                                     posicaoAtual = posicaoAtual + 1;                        
                                                     console.log("Posicao Atual " + posicaoAtual);
+
+                                                    contador = contador + 1;
+                                                    $("#posicao").focus();
+                                                    $('#contador').text(contador);
+                                                    $('#produtoEsperado').text("Produto Esperado: " );
+                                                    $('#produto').val("");
+                                                    $('#quantidade').val("");
+                                                    $('#reelid').val("");
+                                                    $('#posicao').val("");
                             
                                                     if (posicaoAtual+1 > posicoes){
                                                        $('#btnFinaliza').submit()
@@ -145,19 +154,19 @@ $(document).on('keypress',function(e) {
                 }
 
     
-                }
+            //     }
     
-            })
+            // })
          
 
-            contador = contador + 1;
-                    $("#posicao").focus();
-                    $('#contador').text(contador);
-                    $('#produtoEsperado').text("Produto Esperado: " );
-                    $('#produto').val("");
-                    $('#quantidade').val("");
-                    $('#reelid').val("");
-                    $('#posicao').val("");
+            // contador = contador + 1;
+            //         $("#posicao").focus();
+            //         $('#contador').text(contador);
+            //         $('#produtoEsperado').text("Produto Esperado: " );
+            //         $('#produto').val("");
+            //         $('#quantidade').val("");
+            //         $('#reelid').val("");
+            //         $('#posicao').val("");
 
             
 

@@ -99,23 +99,23 @@ $(document).on('keypress',function(e) {
 
             if (posicaoAtual < posicoes){
 
-                var valorLido = $("#produto").val();
+                var valorLido = $("#produto").val().replace(" ","");
                 console.log($("#quantidade").val());
 
                 if($("#quantidade").val() == ""){
-                    $.ajax({  
-                        url:'/returnPartNumber/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
-                        method:'get',  
-                        dataType:'json',            
-                        success:function(partNumber){
+                    // $.ajax({  
+                    //     url:'/returnPartNumber/'+valorLido+"||"+produtoAtualEsperado+"||"+$("#posicao").val(),  
+                    //     method:'get',  
+                    //     dataType:'json',            
+                    //     success:function(partNumber){
             
-                            console.log("partNumber " + partNumber.success)        
-                            console.log("Produto Esperado " + produtoAtualEsperado)    
+                    //         console.log("partNumber " + partNumber.success)        
+                    //         console.log("Produto Esperado " + produtoAtualEsperado)    
 
-                            if(partNumber.success != ""){
+                            if(valorLido.split("*")[0] != ""){
 
                             $.ajax({  
-                                url:'/checaProdutoAtivo/'+ partNumber.success ,  
+                                url:'/checaProdutoAtivo/'+ valorLido.split("*")[0] ,  
                                 method:'post',  
                                 dataType:'json',
                                 success:function(data){
@@ -129,8 +129,7 @@ $(document).on('keypress',function(e) {
                                         method:'get',  
                                         dataType:'json',
                                         success:function(data){
-                                           console.log(data.success)
-                                           console.log(data.success)
+                                           console.log(data.success)                                         
                                           
                                                console.log("ENTRANDO NO SETCORRENTE");
                                                 
@@ -141,10 +140,10 @@ $(document).on('keypress',function(e) {
                                                     data:{                                 
                                                         maquina: $('#maquina').val(),
                                                         produtoAtualEsperado : produtoAtualEsperado,
-                                                        valorLido: partNumber.success,
-                                                        qtd: partNumber.qtd,
-                                                        lote: partNumber.lote,
-                                                        reelId: partNumber.reelId,
+                                                        valorLido: valorLido.split("*")[0],
+                                                        qtd: valorLido.split("*")[1],
+                                                        lote: valorLido.split("*")[0],
+                                                        reelId: valorLido.split("*")[0],
                                                         cbRap : cbRap,
                                                         indexPosicaoAtual : posicaoAtual                                     
                        
@@ -186,14 +185,14 @@ $(document).on('keypress',function(e) {
                             }); 
 
 
-                        }else{
-                            alert("Produto inserido não condiz com o esperado");
-                        }
+                        // }else{
+                        //     alert("Produto inserido não condiz com o esperado");
+                        // }
 
             
                         }
             
-                    })
+                    // })
                 }else{
                     $.ajax({  
                         url:'/checaProdutoAtivo/'+ valorLido ,  
@@ -307,19 +306,19 @@ $('#btnAlimentar').click(function() {
 
     if (posicaoAtual < posicoes){
 
-        var valorLido = $("#produto").val();
+        var valorLido = $("#produto").val().replace(" ","");
         console.log($("#quantidade").val());
         if($("#quantidade").val() == ""){
-            $.ajax({  
-                url:'/returnPartNumber/'+valorLido,  
-                method:'get',  
-                dataType:'json',            
-                success:function(partNumber){
+            // $.ajax({  
+            //     url:'/returnPartNumber/'+valorLido,  
+            //     method:'get',  
+            //     dataType:'json',            
+            //     success:function(partNumber){
     
-                    console.log("partNumber " +partNumber.success)
+                    //console.log("partNumber " +partNumber.success)
                     
                     $.ajax({  
-                        url:'/checaProdutoAtivo/'+ partNumber.success ,  
+                        url:'/checaProdutoAtivo/'+ valorLido.split("*")[0] ,  
                         method:'post',  
                         dataType:'json',
                         success:function(data){
@@ -333,9 +332,8 @@ $('#btnAlimentar').click(function() {
                                 method:'get',  
                                 dataType:'json',
                                 success:function(data){
-                                   console.log(data.success)
-                                   console.log(data.success)
-                                    if(data.success.cdProduto == partNumber.success){
+                                   console.log(data.success)                        
+                                    if(data.success.cdProduto == valorLido.split("*")[0]){
                                        console.log("ENTRANDO NO SETCORRENTE");
                                         
                                         $.ajax({  
@@ -386,9 +384,9 @@ $('#btnAlimentar').click(function() {
                         }
                     }); 
     
-                }
+            //     }
     
-            })
+            // })
         }else{
             $.ajax({  
                 url:'/checaProdutoAtivo/'+ valorLido ,  
