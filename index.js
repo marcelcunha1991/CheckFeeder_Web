@@ -54,9 +54,9 @@ app.use("/", MarcarasoRoutes);
 app.use("/",identificacaoRoutes);
 
 //Cria Tabelas
-    Mascaras.sync();
-    Fabricantes.sync();
-    Partnumbers.sync();
+   // Mascaras.sync();
+   // Fabricantes.sync();
+   // Partnumbers.sync();
   
 
 

@@ -26,30 +26,29 @@ router.get("/buscaPosicoes/:valorLido", async (req,res) => {
     
     if(req.session.posicoesAlt != undefined){
         alternativos = req.session.posicoesAlt;
-    }
+    }    
+
+    var leitura = req.params.valorLido.split("*");
     
-
-    var leitura = req.params.valorLido.split("||");
-    
-    if(leitura[0].includes(",")){
-        partnumber = leitura[0].split(",")
-        divisor = ",";
-    }else if(leitura[0].includes("@")){
-        partnumber = leitura[0].split("@")
-        divisor = "@";
-    }else if(leitura[0].includes(";")){
-        partnumber = leitura[0].split(";")
-        divisor = ";";
-    }else if(leitura[0].includes("!")){
-        partnumber = leitura[0].split("!")
-        divisor = "!";
-    }else if(leitura[0].includes("#")){
-        partnumber = leitura[0].split("#")
-        divisor = "#";
-    }
+    // if(leitura[0].includes(",")){
+    //     partnumber = leitura[0].split(",")
+    //     divisor = ",";
+    // }else if(leitura[0].includes("@")){
+    //     partnumber = leitura[0].split("@")
+    //     divisor = "@";
+    // }else if(leitura[0].includes(";")){
+    //     partnumber = leitura[0].split(";")
+    //     divisor = ";";
+    // }else if(leitura[0].includes("!")){
+    //     partnumber = leitura[0].split("!")
+    //     divisor = "!";
+    // }else if(leitura[0].includes("#")){
+    //     partnumber = leitura[0].split("#")
+    //     divisor = "#";
+    // }
 
 
-    if(partnumber.length == 0){
+    if(leitura.length == 0){
         var response = {
             status  : 200,
             success : ""
@@ -60,12 +59,10 @@ router.get("/buscaPosicoes/:valorLido", async (req,res) => {
     }else{
         var listaPosicoes = [];
 
-        for(var i = 0; i < partnumber.length;i++){
-
-            let validacao = await validaProdutoAtivo(partnumber[i]);
+            let validacao = await validaProdutoAtivo(leitura[0]);
 
             if(validacao){
-                var componente = partnumber[i];
+                var componente = partnumber[0];
 
                 for(var j = 0; j < todasPosicoes.length; j++ ){
 
@@ -82,8 +79,7 @@ router.get("/buscaPosicoes/:valorLido", async (req,res) => {
                 }
 
             }
-
-        }
+        
 
         var response = {
             status  : 200,
